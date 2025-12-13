@@ -1,0 +1,29 @@
+{
+  "name": "app",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "bun run --watch backend/index.ts & cd frontend && bun run dev",
+    "backend": "bun run --watch backend/index.ts",
+    "frontend": "cd frontend && bun run dev"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@xenova/transformers": "^2.17.2",
+    "axios": "^1.13.2",
+    "cheerio": "^1.1.2",
+    "concurrently": "^9.2.1",
+    "fs-extra": "^11.3.3",
+    "hono": "^4.11.3",
+    "pdf-parse": "^2.4.5",
+    "tesseract.js": "^7.0.0",
+    "unpdf": "^1.4.0"
+  }
+}
