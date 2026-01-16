@@ -30,7 +30,8 @@ The server will be available at `http://localhost:3000`.
 
 | Variable | Description |
 |-----------|-------------|
-| `OPENROUTER_API_KEY` | API Key for LLM models. |
+| `AI_API_KEY` | API Key for LLM models (falls back to `OPENROUTER_API_KEY`). |
+| `AI_BASE_URL` | Base URL for the AI API (default: OpenRouter). Supports any OpenAI-compatible endpoint. |
 | `AI_MODELS` | Comma-separated list of models for fallback. |
 | `SEARXNG_URL` | URL of your SearXNG instance. |
 | `DATABASE_URL` | Path to the SQLite database file. |

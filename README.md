@@ -29,14 +29,15 @@ PatentHub is a self-hosted platform designed for deep analysis of patents and sc
 ### Prerequisites
 
 - Docker and Docker Compose
-- An [OpenRouter](https://openrouter.ai/) API Key
+- An API Key for an LLM provider (e.g., [OpenRouter](https://openrouter.ai/) or any OpenAI-compatible endpoint like LiteLLM, vLLM, Ollama)
 - A [SearXNG](https://github.com/searxng/searxng) instance (self-hosted or find a public one at [searx.space](https://searx.space/))
 
 ### Quick Start with Docker
 
 1. Clone the repository.
-2. Copy `env.example` to `.env` and fill in your `OPENROUTER_API_KEY`.
-3. Spin up the containers:
+2. Copy `env.example` to `.env` and fill in your `AI_API_KEY` (or `OPENROUTER_API_KEY`).
+3. (Optional) If using a provider other than OpenRouter, set `AI_BASE_URL` in the `.env` file.
+4. Spin up the containers:
    ```bash
    docker-compose up -d
    ```
