@@ -2,18 +2,22 @@ import axios from 'axios';
 import db from '../db';
 import { generateEmbedding, cosineSimilarity, isModelLoaded } from './embeddings';
 
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const AI_API_KEY = process.env.AI_API_KEY || process.env.OPENROUTER_API_KEY;
+const AI_BASE_URL = process.env.AI_BASE_URL || 'https://openrouter.ai/api/v1';
 const MODELS = (process.env.AI_MODELS || "").split(',').filter(Boolean);
 const DEFAULT_MODEL = MODELS[0] || "";
 
-async function callOpenRouter(model: string, messages: any[]) {
+async function callAI(model: string, messages: any[]) {
   if (!model) throw new Error('No AI model configured. Please set AI_MODELS in your environment.');
-  return await axios.post('https://openrouter.ai/api/v1/chat/completions', {
+  
+  const url = AI_BASE_URL.endsWith('/') ? `${AI_BASE_URL}chat/completions` : `${AI_BASE_URL}/chat/completions`;
+
+  return await axios.post(url, {
     model: model,
     messages: messages,
   }, {
     headers: {
-      'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+      'Authorization': `Bearer ${AI_API_KEY}`,
       'HTTP-Referer': process.env.AI_REFERER || 'https://github.com/your-username/patent-hub',
       'X-Title': process.env.AI_TITLE || 'PatentHub',
     }
@@ -26,7 +30,7 @@ async function callWithFallback(initialModel: string, messages: any[]) {
 
   for (const model of modelsToTry) {
     try {
-      const response = await callOpenRouter(model, messages);
+      const response = await callAI(model, messages);
       const content = response.data.choices?.[0]?.message?.content;
       
       if (content) {
@@ -44,7 +48,7 @@ async function callWithFallback(initialModel: string, messages: any[]) {
 }
 
 export async function generateExplanation(patentId: string, title: string, abstract: string, modelOverride?: string) {
-  if (!OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY is not set');
+  if (!AI_API_KEY) throw new Error('AI_API_KEY is not set');
 
   const initialModel = modelOverride || DEFAULT_MODEL;
   const customPromptRow = db.query('SELECT value FROM application_settings WHERE key = ?').get('system_prompt_explanation') as any;
@@ -68,7 +72,7 @@ export async function generateExplanation(patentId: string, title: string, abstr
 }
 
 export async function chatWithPatent(patentId: string, userMessage: string, history: any[], modelOverride?: string) {
-  if (!OPENROUTER_API_KEY) {
+  if (!AI_API_KEY) {
     throw new Error('AI Chat is disabled because the API Key is missing.');
   }
 
@@ -137,7 +141,7 @@ export async function chatWithPatent(patentId: string, userMessage: string, hist
 }
 
 export async function comparePatents(id1: string, id2: string, modelOverride?: string) {
-  if (!OPENROUTER_API_KEY) throw new Error('OPENROUTER_API_KEY not set');
+  if (!AI_API_KEY) throw new Error('AI_API_KEY not set');
   
   const p1 = db.query('SELECT title, abstract, full_text FROM patents WHERE id = ?').get(id1) as any;
   const p2 = db.query('SELECT title, abstract, full_text FROM patents WHERE id = ?').get(id2) as any;
